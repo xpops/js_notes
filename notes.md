@@ -2,7 +2,23 @@
 
 This is my personal JavaScript learning note. Only the important or previously unknown features are organized here.
 
-## Async / Defer
+## async vs defer
+
+Script attributes that control how the browser fetches and executes external JavaScript.
+
+### async
+
+Fetches the script asynchronously while continuing to parse the HTML, but executes it as soon as the download is complete.
+
+- **Pros**: Parallel downloading. Useful for independent scripts (e.g., analytics, ads).
+- **Cons**: Pauses HTML parsing during execution. Execution order is NOT guaranteed (it follows download order).
+
+### defer
+
+Fetches the script asynchronously while continuing to parse the HTML, and executes it only after the HTML document has been fully parsed.
+
+- **Pros**: Parallel downloading and zero blocking of HTML parsing. Execution order is guaranteed (follows the order in the HTML). Recommended for most cases.
+- **Cons**: Only works for external scripts (src).
 
 ## Symbols
 
@@ -26,25 +42,148 @@ When printing symbols, use .description attribute to convert to string
 console.log(`symbol1: ${symbol1.description}`);
 ```
 
-## async vs defer
+## Hoisting
 
-Script attributes that control how the browser fetches and executes external JavaScript.
+JavaScript's behavior of moving declarations to the top of their scope during the compilation phase.
 
-### async
+### var vs let / const
 
-Fetches the script asynchronously while continuing to parse the HTML, but executes it as soon as the download is complete.
+- **var**: Hoisted and initialized with `undefined`. You can access it before declaration without an error.
+- **let / const**: Hoisted but **NOT** initialized. They stay in the **Temporal Dead Zone (TDZ)** until the declaration is reached. Accessing them before declaration results in a `ReferenceError`.
 
-- **Pros**: Parallel downloading. Useful for independent scripts (e.g., analytics, ads).
-- **Cons**: Pauses HTML parsing during execution. Execution order is NOT guaranteed (it follows download order).
+```js
+console.log(name); // undefined
+var name = "Abel";
 
-### defer
+console.log(age); // ReferenceError: Cannot access 'age' before initialization
+let age = 22;
+```
 
-Fetches the script asynchronously while continuing to parse the HTML, and executes it only after the HTML document has been fully parsed.
+### Why avoid var?
 
-- **Pros**: Parallel downloading and zero blocking of HTML parsing. Execution order is guaranteed (follows the order in the HTML). Recommended for most cases.
-- **Cons**: Only works for external scripts (src).
+1. **No Block Scope**: `var` only recognizes function scope and global scope. It ignores blocks like `if`, `for`, etc., which can lead to accidental variable overwrites.
+2. **Hoisting Confusion**: Being able to use a variable before it's declared makes code harder to read and debug.
+3. **Redeclaration**: `var` allows redeclaring the same variable in the same scope, which is a common source of bugs.
 
 ## Dynamic Typing
 
 JS is a dynamically typed language. Types can be modified in runtime.
 TS solves this.
+
+## Objects
+
+```js
+const abel = { name: "abel", age: 22 };
+```
+
+`abel` object itself is constant, but attributes can be modified:
+
+```js
+abel.age = 23;
+console.log(abel); // { name: 'abel', age: 23 }
+```
+
+## OR
+
+### Short-circuit evaluation
+
+If a true is found, does **NOT** check further.
+
+```js
+const value1 = true;
+const value2 = 4 < 2; // false
+
+console.log(`or: ${value1 || value2 || myFunc()}`);
+
+function myFunc() {
+  for (let i = 0; i < 100; i++) {
+    // wasting time
+    console.log("aaaaaaa");
+  }
+  return true;
+}
+```
+
+When writing or, keep computation heavy functions on the **back**.
+
+## AND
+
+### Short-circuit evaluation
+
+If a false is found, does **NOT** check further.
+
+```js
+const value1 = false;
+const value2 = 4 > 2; // true
+
+console.log(`and: ${value1 && value2 && checkUser()}`);
+
+function checkUser() {
+  console.log("Checking database...");
+  return true;
+}
+```
+
+When writing and, keep computation heavy functions on the **back**.
+Used for null/undefined checks: `user && user.name`.
+
+```js
+if (nullableObject != null) {
+  nullableObject.something;
+}
+// nullableObject && nullableObject.something
+```
+
+## Equalities
+
+```js
+const stringFive = "5";
+const numberFive = 5;
+```
+
+### Loose equality `==` (w/ type conversion)
+
+```js
+console.log(stringFive == numberFive); // true
+```
+
+### Strict equality `===` (w/o type conversion)
+
+```js
+console.log(stringFive === numberFive); // false
+```
+
+## Functions
+
+### First-class function
+Functions are treated like any other variable.
+- Can be assigned as a value to a variable.
+- Can be passed as an argument to other functions (callback).
+- Can be returned by another function.
+
+### Declaration vs Expression
+- **Function Declaration**: Defined with `function name() {}`. Hoisted to the top, so it can be called **before** the declaration.
+- **Function Expression**: Created when execution reaches it (usually assigned to a variable). **NOT** hoisted in the same way; must be defined before calling.
+
+```js
+// Declaration (Hoisted)
+printHello(); 
+function printHello() { console.log('Hello'); }
+
+// Expression (Not Hoisted)
+const printBye = function() { console.log('Bye'); };
+printBye();
+```
+
+### Arrow Function
+A concise way to write function expressions. Always anonymous.
+
+```js
+const simplePrint = () => console.log('simpler print!');
+const add = (a, b) => a + b;
+
+const complexAdd = (a, b) => {
+    // do something more
+    return a + b;
+};
+```
