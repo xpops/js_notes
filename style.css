@@ -1,0 +1,34 @@
+:root {
+    --bg-color: aliceblue;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0%;
+}
+
+.sidebar {
+    background-color: var(--bg-color);
+    width: 250px;
+    height: 100vh;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    display: flex;
+    flex-direction: column;
+    padding: 10px 14px;
+}
+
+.databases {
+    margin: 20px 0px;
+}
+
+.databases ul {
+    list-style: none;
+    padding: 0;
+}
