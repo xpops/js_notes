@@ -156,34 +156,73 @@ console.log(stringFive === numberFive); // false
 ## Functions
 
 ### First-class function
+
 Functions are treated like any other variable.
+
 - Can be assigned as a value to a variable.
 - Can be passed as an argument to other functions (callback).
 - Can be returned by another function.
 
 ### Declaration vs Expression
+
 - **Function Declaration**: Defined with `function name() {}`. Hoisted to the top, so it can be called **before** the declaration.
 - **Function Expression**: Created when execution reaches it (usually assigned to a variable). **NOT** hoisted in the same way; must be defined before calling.
 
 ```js
 // Declaration (Hoisted)
-printHello(); 
-function printHello() { console.log('Hello'); }
+printHello();
+function printHello() {
+  console.log("Hello");
+}
 
 // Expression (Not Hoisted)
-const printBye = function() { console.log('Bye'); };
+const printBye = function () {
+  console.log("Bye");
+};
 printBye();
 ```
 
 ### Arrow Function
+
 A concise way to write function expressions. Always anonymous.
 
 ```js
-const simplePrint = () => console.log('simpler print!');
+const simplePrint = () => console.log("simpler print!");
 const add = (a, b) => a + b;
 
 const complexAdd = (a, b) => {
-    // do something more
-    return a + b;
+  // do something more
+  return a + b;
 };
 ```
+
+## Class
+
+### Getter and Setter
+
+```js
+class User {
+  constructor(firstName, lastName, age) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.age = age;
+  }
+
+  get age() {
+    return this._age;
+  }
+
+  set age(value) {
+    // if (value < 0) {
+    //     throw Error("age cannot be negative");
+    // }
+    this._age = value < 0 ? 0 : value;
+  }
+
+  get fullName() {
+    return `${this.firstName} ${this.lastName}`;
+  }
+}
+```
+
+`get` and `set` keywords in JS acts differently from ordinary getter and setter methods. Once they are defined, `this.age` calls this `get` function and `this.age =` calls the `set` function.
