@@ -196,6 +196,8 @@ const complexAdd = (a, b) => {
 };
 ```
 
+Note: Arrow function does not have its own `this`. If
+
 ## Class
 
 ### Getter and Setter
@@ -226,3 +228,119 @@ class User {
 ```
 
 `get` and `set` keywords in JS acts differently from ordinary getter and setter methods. Once they are defined, `this.age` calls this `get` function and `this.age =` calls the `set` function.
+
+### Inheritance
+
+```js
+class Shape {
+  constructor(width, height, color) {
+    this.width = width;
+    this.height = height;
+  }
+
+  getArea() {
+    return this.width * this.height;
+  }
+}
+
+class Rectangle extends Shape {}
+
+class Triangle extends Shape {
+  getArea() {
+    // override
+    return super.getArea() / 2;
+  }
+}
+
+const rectangle = new Rectangle(20, 20);
+const triangle = new Triangle(20, 20);
+
+console.log(rectangle.getArea()); // 400
+console.log(triangle.getArea()); // 200
+```
+
+## Object
+
+> object = { key : value };
+
+Objects are collections of key, value pairs.
+
+### Constructor Function vs. Class
+
+```js
+// Constructor Function
+function Person1(name, age) {
+  this.name = name;
+  this.age = age;
+}
+const person1 = new Person1("Abel", 23);
+console.log(person1);
+
+// Class
+class Person {
+  constructor(name, age) {
+    this.name = name;
+    this.age = age;
+  }
+}
+const person2 = new Person("Greg", 19);
+console.log(person2);
+```
+
+In most circumstances, use Class.
+
+## JSON
+
+### `JSON.stringify()` : Object -> JSON (serialize)
+
+```js
+// 1. Object to JSON (serialize)
+// stringify(obj)
+let json = JSON.stringify(true);
+console.log(json);
+
+json = JSON.stringify(["apple", "banana"]);
+console.log(json);
+
+const rabbit = {
+  name: "tori",
+  color: "white",
+  size: null,
+  birthDate: new Date(),
+  jump: () => {
+    console.log(`${this.name} can jump!`);
+  },
+};
+json = JSON.stringify(rabbit);
+console.log(json);
+
+// array as replacer
+json = JSON.stringify(rabbit, ["name", "color"]);
+console.log(json);
+
+// callbackfunction as replacer
+json = JSON.stringify(rabbit, (key, value) => {
+  console.log(`key: ${key}, value: ${value}`);
+  return key === "name" ? "Fiver" : value;
+});
+console.log(json);
+```
+
+### `JSON.parse(json)` JSON -> Object (deserialize)
+
+```js
+// 2. JSON to Object (deserialize)
+json = JSON.stringify(rabbit);
+const obj = JSON.parse(json, (key, value) => {
+  // reviver
+  console.log(`key: ${key}, value: ${value}`);
+  return key === "birthDate" ? new Date(value) : value;
+});
+console.log(obj);
+
+rabbit.jump();
+// obj.jump();
+
+console.log(rabbit.birthDate.getDate());
+console.log(obj.birthDate.getDate());
+```
